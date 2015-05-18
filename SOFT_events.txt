@@ -61,7 +61,7 @@ New Types
     The callback function that applications can define, and is accepted by
     alEventCallbackSOFT, is defined as:
 
-    typedef void (AL_APIENTRY *ALEVENTPROCSOFT)(ALenum message,
+    typedef void (AL_APIENTRY *ALEVENTPROCSOFT)(ALenum eventType,
                                                 ALuint object,
                                                 ALuint param,
                                                 ALsizei length,
@@ -80,7 +80,7 @@ New Tokens
     AL_EVENT_CALLBACK_FUNCTION_SOFT             0x<TO BE ASSIGNED>
     AL_EVENT_CALLBACK_USER_PARAM_SOFT           0x<TO BE ASSIGNED>
 
-    Tokens accepted by the <message> parameter of ALEVENTPROCSOFT:
+    Tokens accepted by the <eventType> parameter of ALEVENTPROCSOFT:
 
     AL_EVENT_ERROR_SOFT                         0x<TO BE ASSIGNED>
     AL_EVENT_BUFFER_COMPLETED_SOFT              0x<TO BE ASSIGNED>
