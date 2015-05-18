@@ -1,0 +1,152 @@
+Name
+
+    AL_SOFT_events
+
+Contributors
+
+    Chris Forbes
+
+Contact
+
+    Chris Forbes (chrisf 'at' ijw.co.nz)
+
+Status
+
+    Incomplete.
+
+Dependencies
+
+    This extension is written against the OpenAL 1.1 specification.
+
+Overview
+
+    This extension allows the AL to notify applications when various events
+    occur that may be useful during application development, debugging,
+    profiling, and to streamline normal application management of AL resources.
+
+    These events are represented in the form of enumerable messages with a
+    human readable string representation. Examples of events include incorrect
+    use of the AL, performance warnings, and notification of buffer completion
+    and source state transitions.
+
+    Where a message refers to specific AL objects, the object names are
+    included in the message so that appropriate action may be taken in the
+    application. For example, a notification of a source state transition
+    includes the name of the source.
+
+    Messages are communicated to the application through an application-defined
+    callback function that is called by the AL implementation on each message.
+    The motivation for the callback routine is to free application developers
+    from actively having to query whether an AL error or other event has
+    occurred. With a callback, developers can keep their code free of debug
+    checks, set breakpoints in the callback function, and only have to react
+    to messages as they occur.
+
+    Message delivery can be enabled and disabled by changing the
+    EVENT_DELIVERY_SOFT state.
+
+Issues
+
+    None yet!
+
+New Procedures and Functions
+
+    void alEventCallbackSOFT(ALEVENTPROCSOFT callback,
+                             const void *userParam);
+
+    void alGetPointervSOFT(ALenum pname, void **params);
+
+New Types
+
+    The callback function that applications can define, and is accepted by
+    alEventCallbackSOFT, is defined as:
+
+    typedef void (AL_APIENTRY *ALEVENTPROCSOFT)(ALenum message,
+                                                ALuint object,
+                                                ALuint param,
+                                                ALsizei length,
+                                                const ALchar *message,
+                                                const void *userParam); 
+
+New Tokens
+
+    Accepted by the <capability> parameter of alEnable, alDisable, and
+    alIsEnabled:
+
+    AL_EVENT_DELIVERY_SOFT                      0x<TO BE ASSIGNED>
+
+    Accepted by the <pname> parameter of alGetPointervSOFT:
+
+    AL_EVENT_CALLBACK_FUNCTION_SOFT             0x<TO BE ASSIGNED>
+    AL_EVENT_CALLBACK_USER_PARAM_SOFT           0x<TO BE ASSIGNED>
+
+    Tokens accepted by the <message> parameter of ALEVENTPROCSOFT:
+
+    AL_EVENT_ERROR_SOFT                         0x<TO BE ASSIGNED>
+    AL_EVENT_BUFFER_COMPLETED_SOFT              0x<TO BE ASSIGNED>
+    AL_EVENT_SOURCE_STATE_CHANGED_SOFT          0x<TO BE ASSIGNED>
+    AL_EVENT_PERFORMANCE_SOFT                   0x<TO BE ASSIGNED>
+
+Additions to the OpenAL 1.1 Specification
+
+    Event Delivery
+
+    Application developers can obtain more information from the AL in the form
+    of event messages. This information can include details about AL errors,
+    implementation-dependent performance warnings, and changes to the state of
+    objects.
+
+    This information is communicated through a stream of event messages that
+    are generated as AL commands are executed, and as the normal playback
+    progress updates the state of various AL objects.
+
+    To enable or disable the generation of events, the application should
+    set the capability AL_EVENT_DELIVERY_SOFT.
+
+    To query whether event generation is enabled, the enum value
+
+        AL_EVENT_DELIVERY_SOFT
+
+    may be passed as the parameter to alIsEnabled. If events are being
+    generated, AL_TRUE will be returned. Otherwise, AL_FALSE is returned.
+
+
+    Event callback function
+
+    Applications can provide a callback function for receiving events using the
+    command:
+
+        void alEventCallbackSOFT(ALEVENTPROCSOFT callback,
+                                 const void *userParam);
+
+    with <callback> storing the address of the callback function. This function's
+    prototype must follow the type definition of ALEVENTPROCSOFT including its
+    platform-dependent calling convention. Anything else will result in undefined
+    behavior. Only one debug callback can be specified for the current context,
+    and further calls overwrite the previous callback. Specifying NULL as the
+    value of <callback> clears the current callback and disables event output
+    through callbacks. Applications can provide user-specified data through the
+    pointer <userParam>. The context will store this pointer and include it as
+    one of the parameters in each call to the callback function.
+
+    Applications can query the current callback function and the current user-
+    specified parameter by obtaining the values of
+    AL_EVENT_CALLBACK_FUNCTION_SOFT and AL_EVENT_CALLBACK_USER_PARAM_SOFT
+    respectively.
+
+    Applications that specify a callback function must be aware of certain
+    special conditions when executing code inside a callback when it is called
+    by the AL, regardless of the event type.
+
+    The memory for <message> is owned and managed by the AL, and should only
+    be considered valid for the duration of the function call.
+
+    The behavior of calling any AL or ALC function from within the callback
+    function is undefined and may lead to program termination.
+
+    The callback function may be called on a thread other than the application's
+    thread in which the originating context is current.
+
+Errors
+
+    None.
